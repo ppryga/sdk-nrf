@@ -8,3 +8,6 @@ source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
 
 config NRF_DEFAULT_BLUETOOTH
 	default y
+
+SB_CONFIG_NETCORE_REMOTE_BOARD_NAME="nrf54h20dk_nrf54h20_cpurad"
+SB_CONFIG_SUPPORT_NETCORE=y

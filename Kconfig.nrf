@@ -111,6 +111,13 @@ config NORDIC_QSPI_NOR_FLASH_LAYOUT_PAGE_SIZE
 config GETOPT
 	default n
 
+config TEST_RANDOM_GENERATOR
+	bool
+	default y
+	depends on SOC_NRF54H20_CPUAPP || SOC_NRF54H20_CPURAD
+	depends on !(SSF_CLIENT || SSF_PRNG_SERVICE_ENABLED)
+	depends on ENTROPY_GENERATOR
+
 rsource "samples/Kconfig"
 rsource "subsys/Kconfig"
 rsource "modules/Kconfig"

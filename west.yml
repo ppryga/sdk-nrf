@@ -39,6 +39,8 @@ manifest:
       url-base: https://github.com/BabbleSim
     - name: bosch
       url-base: https://github.com/boschsensortec
+    - name: ppryga
+      url-base: https://github.com/ppryga
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -60,8 +62,10 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/introduction/index.html
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
-      repo-path: sdk-zephyr
-      revision: pull/1577/head
+      #repo-path: sdk-zephyr
+      repo-path: zephyr
+      remote: ppryga
+      revision: nrf54h20_dk
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
