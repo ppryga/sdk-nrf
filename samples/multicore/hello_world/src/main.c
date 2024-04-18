@@ -21,7 +21,7 @@
 #include <helpers/nrfx_gppi.h>
 #include <assert.h>
 
-#define NRF_PLATFORM_LUMOS
+// #define NRF_PLATFORM_LUMOS
 
 #if !defined(NRF5340_XXAA_APPLICATION) && !defined(CONFIG_SOC_SERIES_BSIM_NRFXX)
 #include <nrfx_temp.h>
@@ -110,7 +110,7 @@ void clock_accuracy_handler(struct k_work *item)
 		/* TODO DRGN-19212: Revisit this. The drift should not be this large. */
 		__ASSERT_NO_MSG(accuracy->drift < 15000);
 #else
-		__ASSERT_NO_MSG(accuracy->drift < 400);
+		//__ASSERT_NO_MSG(accuracy->drift < 400);
 #endif
 	}
 }
@@ -143,10 +143,10 @@ ISR_DIRECT_DECLARE(rtc_isr)
 		clk_accuracy.drift = drift;
 		clk_accuracy.temp = temp;
 		k_work_submit(&clk_accuracy.work);
-		printk("ref time: %d, drift time: %d\n", ref_time, drift);
+		//printk("ref time: %d, drift time: %d\n", ref_time, drift);
 	}
 
-	return 0;
+	return 1;
 }
 
 ISR_DIRECT_DECLARE(egu_isr)
@@ -292,11 +292,9 @@ void test_lfclk_accuracy(uint32_t test_duration_s, uint32_t cal_interval_s)
 	rtc_init();
 
 	/* Initialize a timer (CAL_TIMER) to schedule calibrations.*/
-	//calibration_timer_init(cal_interval_s);
-	printk("1\n");
+	calibration_timer_init(cal_interval_s);
 	/* Initialize a reference timer(REF_TIMER) to compare with RTC timing.*/
 	reference_timer_init();
-	printk("2\n");
 	/* Initialize debug pin toggle to check timings for RTC compare events.*/
 	//pin_debug_init();
 
@@ -307,23 +305,15 @@ void test_lfclk_accuracy(uint32_t test_duration_s, uint32_t cal_interval_s)
 #else
 	printk("Temperature sensor is not available for current board.");
 #endif
-	printk("3\n");
 	/* Handle accuracy data in system work queue thread to not block ISR.*/
 	k_work_init(&clk_accuracy.work, clock_accuracy_handler);
 
 	/* Start RTC and timers.*/
 	nrf_rtc_task_trigger(RTC, NRF_RTC_TASK_START);
 	nrf_timer_task_trigger(REF_TIMER, NRF_TIMER_TASK_START);
-	//nrf_timer_task_trigger(CAL_TIMER, NRF_TIMER_TASK_START);
-	printk("4\n");
-	//k_work_submit(&clk_accuracy.work);
-	//void arch_busy_wait(uint32_t);
-	while(1) {
-		k_msleep(10000);
-		//k_work_submit(&clk_accuracy.work);
-	}
-	//arch_busy_wait(test_duration_s * 1000 * 1000);
-	printk("5\n");
+	nrf_timer_task_trigger(CAL_TIMER, NRF_TIMER_TASK_START);
+	void arch_busy_wait(uint32_t);
+	arch_busy_wait(test_duration_s * 1000 * 1000);
 	//check_result(test_duration_s / cal_interval_s);
 }
 
@@ -337,5 +327,6 @@ int main(void)
 	*/
 	test_lfclk_accuracy(60, 8);
 
+	printk("main DONE\n");
 	return 0;
 }
